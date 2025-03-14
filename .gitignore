@@ -1,0 +1,5 @@
+server/certs/*
+server/*.sql
+server/db.js
+*.txt
+*.csv
