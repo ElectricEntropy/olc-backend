@@ -85,12 +85,12 @@ app.delete("/api/customers/:id", async (req, res) => {
 //create
 app.post("/api/comics", async (req, res) => {
   try {
-    const { title, issue_number, publisher, is_custom } = req.body;
-    const added_at = new Date().toLocaleString();
+    const { title, issue_number, publisher, distributor, release_date, is_custom } = req.body;
+    //const added_at = new Date().toLocaleString();
 
     const newComic = await pool.query(
-      "INSERT INTO comics VALUES(DEFAULT, $1, $2, $3, $4, $5) RETURNING *",
-      [title, issue_number, publisher, added_at, is_custom]
+      "INSERT INTO comics VALUES(DEFAULT, $1, $2, $3, $4, $5, $6) RETURNING *",
+      [title, issue_number, publisher, distributor, release_date, is_custom]
     );
 
     res.json(newComic.rows[0]);
@@ -128,10 +128,10 @@ app.get("/api/comics/:id", async (req, res) => {
 app.put("/api/comics/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, issue_number, publisher, is_custom } = req.body;
+    const { title, issue_number, publisher, distributor, release_date, is_custom } = req.body;
 
-    const comic = await pool.query("UPDATE comics SET title = $2, issue_number = $3, publisher = $4, is_custom = $5 WHERE id = $1 RETURNING *",
-      [id, title, issue_number, publisher, is_custom]
+    const comic = await pool.query("UPDATE comics SET title = $2, issue_number = $3, publisher = $4, distributor = $5, release_date = $6, is_custom = $7 WHERE id = $1 RETURNING *",
+      [id, title, issue_number, publisher, distributor, release_date, is_custom]
     );
 
     res.json(comic.rows[0]);
@@ -161,11 +161,12 @@ app.post("/api/customers/:id/pulls", async (req, res) => {
   try {
     const customer_id = req.params.id;
     const comic_id = req.body.id;
+    const { quantity } = req.body;
     const date_added = new Date().toLocaleString();
 
     const newComicPulls = await pool.query(
-      "INSERT INTO pulls VALUES(DEFAULT, $1, $2, $3) RETURNING *",
-      [customer_id, comic_id, date_added]
+      "INSERT INTO pulls VALUES(DEFAULT, $1, $2, $3, $4) RETURNING *",
+      [customer_id, comic_id, quantity, date_added]
     );
 
     res.json(newComicPulls.rows[0]);
@@ -205,10 +206,10 @@ app.get("/api/pulls", async (req, res) => {
 app.put("/api/customers/:id/pulls", async (req, res) => {
   try {
     const { id } = req.params;
-    const { customer_id, comic_id } = req.body;
+    const { customer_id, comic_id, quantity } = req.body;
 
-    const comic_pulls = await pool.query("UPDATE pulls SET customer_id = $2, comic_id = $3 WHERE id = $1 RETURNING *",
-      [id, customer_id, comic_id]
+    const comic_pulls = await pool.query("UPDATE pulls SET customer_id = $2, comic_id = $3, quantity = $4 WHERE id = $1 RETURNING *",
+      [id, customer_id, comic_id, quantity]
     );
 
     res.json(comic_pulls.rows[0]);
