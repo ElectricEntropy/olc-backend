@@ -161,7 +161,7 @@ app.post("/api/customers/:id/pulls", async (req, res) => {
   try {
     const customer_id = req.params.id;
     const comic_id = req.body.id;
-    const { quantity } = req.body;
+    const quantity = req.body.quantity || 1;
     const date_added = new Date().toLocaleString();
 
     const newComicPulls = await pool.query(
@@ -203,7 +203,7 @@ app.get("/api/pulls", async (req, res) => {
 })
 
 //update
-app.put("/api/customers/:id/pulls", async (req, res) => {
+app.put("/api/pulls/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { customer_id, comic_id, quantity } = req.body;
